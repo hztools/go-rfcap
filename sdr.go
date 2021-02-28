@@ -48,6 +48,10 @@ type fakeSdr struct {
 	reader sdr.Reader
 }
 
+func (s fakeSdr) HardwareInfo() sdr.HardwareInfo {
+	return sdr.HardwareInfo{}
+}
+
 func (s fakeSdr) Close() error {
 	return nil
 }
