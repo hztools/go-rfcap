@@ -30,6 +30,9 @@ import (
 	"hz.tools/sdr"
 )
 
+// MimeType is the rfcap v1 MIME type to be used.
+const MimeType string = "application/x-hztools.rfcap"
+
 // Magic signifies the rfcap Magic bytes. These are prefixed to the rfcap
 // file, and can be used to determine if the file is valid rfcap or not.
 type Magic [6]byte
