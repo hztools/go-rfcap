@@ -31,7 +31,7 @@ import (
 // where StartRx will provide the rfcap Reader. There are a number of read
 // only attributes (frequency, samples per second), and calls to a number of
 // methods will return sdr.ErrNotSupported.
-func ReaderSdr(in io.Reader) (sdr.Reciever, error) {
+func ReaderSdr(in io.Reader) (sdr.Receiver, error) {
 	reader, header, err := Reader(in)
 	if err != nil {
 		return nil, err

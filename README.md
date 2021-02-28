@@ -1,2 +1,2 @@
-# kc3nwj.com/rfcap
+# hz.tools/rfcap
 

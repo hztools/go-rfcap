@@ -21,7 +21,6 @@
 package rfcap_test
 
 import (
-	"context"
 	"encoding/binary"
 	"io/ioutil"
 	"os"
@@ -169,7 +168,7 @@ func TestRfcapSDR(t *testing.T) {
 	assert.Equal(t, centerFreq, rf.Hz(1337e+6))
 	assert.Equal(t, samplesPerSecond, uint32(1.8e+8))
 
-	rx, err := fakeSdr.StartRx(context.TODO())
+	rx, err := fakeSdr.StartRx()
 	assert.NoError(t, err)
 
 	outSamples := make(sdr.SamplesU8, len(refSamples))

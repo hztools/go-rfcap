@@ -24,7 +24,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"time"
-	"unsafe"
 
 	"hz.tools/rf"
 	"hz.tools/rfcap/internal"
@@ -43,7 +42,7 @@ var (
 func (magic Magic) String() string {
 	switch magic {
 	case MagicVersion1:
-		return "RFCAP1"
+		return "rfcap v1"
 	default:
 		return "unknown"
 	}
@@ -116,17 +115,10 @@ type rawHeader struct {
 	SampleRate      uint32
 	SampleFormat    uint8
 	Endianness      uint8
-	Reserved        [12]uint8
+	Reserved        [20]uint8
 }
 
 func (h rawHeader) Validate() error {
-	expectedSize := 8 * 6
-	size := int(unsafe.Sizeof(h))
-
-	if size != expectedSize {
-		return fmt.Errorf("rfcap: struct alignment is horked: size=%d desire=%d", size, expectedSize)
-	}
-
 	switch Magic(h.Magic) {
 	case MagicVersion1:
 		return nil
