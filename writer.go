@@ -24,7 +24,6 @@ import (
 	"encoding/binary"
 	"io"
 
-	"kc3nwj.com/rfcap/internal"
 	"kc3nwj.com/sdr"
 )
 
@@ -35,8 +34,8 @@ type writer struct {
 
 // Writer will create a new sdr.Reader that writes to the underlying Stream.
 func Writer(out io.Writer, header Header) (sdr.Writer, error) {
-	if header.Endianness == nil {
-		header.Endianness = internal.NativeEndian
+	if err := header.validate(); err != nil {
+		return nil, err
 	}
 
 	bh := header.asBinaryHeader()

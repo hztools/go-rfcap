@@ -22,6 +22,7 @@ package rfcap_test
 
 import (
 	"context"
+	"encoding/binary"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -64,6 +65,7 @@ func TestRfcapEndianO(t *testing.T) {
 		CenterFrequency: rf.MustParseHz("1337MHz"),
 		SampleRate:      1.8e+8,
 		SampleFormat:    sdr.SampleFormatC64,
+		Endianness:      binary.LittleEndian,
 	})
 	assert.NoError(t, err)
 

@@ -74,6 +74,15 @@ type Header struct {
 	Endianness binary.ByteOrder
 }
 
+func (h Header) validate() error {
+	if h.SampleFormat != sdr.SampleFormatU8 {
+		if h.Endianness == nil {
+			return fmt.Errorf("rfcap: rfcap.Header.Endianness must be set")
+		}
+	}
+	return nil
+}
+
 // HeaderFromSDR will create a Header from the provided SDR
 func HeaderFromSDR(dev sdr.Sdr) (Header, error) {
 	cf, err := dev.GetCenterFrequency()
@@ -111,7 +120,6 @@ type rawHeader struct {
 }
 
 func (h rawHeader) Validate() error {
-
 	expectedSize := 8 * 6
 	size := int(unsafe.Sizeof(h))
 
