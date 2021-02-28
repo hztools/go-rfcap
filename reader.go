@@ -24,7 +24,7 @@ import (
 	"encoding/binary"
 	"io"
 
-	"kc3nwj.com/sdr"
+	"hz.tools/sdr"
 )
 
 // reader is the internal type that implements the sdr.Reader interface. This

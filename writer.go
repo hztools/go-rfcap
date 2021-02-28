@@ -24,7 +24,7 @@ import (
 	"encoding/binary"
 	"io"
 
-	"kc3nwj.com/sdr"
+	"hz.tools/sdr"
 )
 
 type writer struct {

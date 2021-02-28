@@ -21,11 +21,10 @@
 package rfcap
 
 import (
-	"context"
 	"io"
 
-	"kc3nwj.com/rf"
-	"kc3nwj.com/sdr"
+	"hz.tools/rf"
+	"hz.tools/sdr"
 )
 
 // ReaderSdr will return a fake "SDR" that complies with the sdr.Sdr interface,
@@ -75,7 +74,7 @@ func newNopCloser(r sdr.Reader) sdr.ReadCloser {
 	return nopCloser{Reader: r}
 }
 
-func (s fakeSdr) StartRx(context.Context) (sdr.ReadCloser, error) {
+func (s fakeSdr) StartRx() (sdr.ReadCloser, error) {
 	return newNopCloser(s.reader), nil
 }
 

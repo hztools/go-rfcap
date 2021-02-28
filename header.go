@@ -26,9 +26,9 @@ import (
 	"time"
 	"unsafe"
 
-	"kc3nwj.com/rf"
-	"kc3nwj.com/rfcap/internal"
-	"kc3nwj.com/sdr"
+	"hz.tools/rf"
+	"hz.tools/rfcap/internal"
+	"hz.tools/sdr"
 )
 
 // Magic signifies the rfcap Magic bytes. These are prefixed to the rfcap

@@ -30,10 +30,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"kc3nwj.com/rf"
-	"kc3nwj.com/rfcap"
-	"kc3nwj.com/sdr"
-	"kc3nwj.com/sdr/mock"
+	"hz.tools/rf"
+	"hz.tools/rfcap"
+	"hz.tools/sdr"
+	"hz.tools/sdr/mock"
 )
 
 func TestHeaderFromSdr(t *testing.T) {
