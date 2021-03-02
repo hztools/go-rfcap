@@ -7,5 +7,3 @@ require (
 	hz.tools/rf v0.0.7
 	hz.tools/sdr v0.0.0-20210228192424-4d52f0f3fe93
 )
-
-replace hz.tools/sdr => ../sdr
