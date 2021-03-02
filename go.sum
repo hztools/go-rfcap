@@ -14,3 +14,5 @@ hz.tools/rf v0.0.5 h1:s6Xd/2/MExWAqanMVHWDBkj5vedI/ELufdo3lohjkPo=
 hz.tools/rf v0.0.5/go.mod h1:wTwZ2xbRvTgaa5S7y34NPMg3YY5hYTlhpBbPlWYcMSE=
 hz.tools/rf v0.0.7 h1:jzIP+Q9We0B1lEZgQp7VTVAPtO/yuTwhNRxkCG/lWOg=
 hz.tools/rf v0.0.7/go.mod h1:wTwZ2xbRvTgaa5S7y34NPMg3YY5hYTlhpBbPlWYcMSE=
+hz.tools/sdr v0.0.0-20210301022121-827d0bde6957 h1:glOboNVTVbqJzakMUbqbP2mlcTS2jsAkCJU+AYCVBhk=
+hz.tools/sdr v0.0.0-20210301022121-827d0bde6957/go.mod h1:vVolgVVC0JVbp1fW5owjK21rb9gRoJ2oIIgg1vzU9NQ=
