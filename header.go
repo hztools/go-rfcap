@@ -65,7 +65,7 @@ type Header struct {
 
 	// Number of Samples (each iq complex number is counted as a single sample)
 	// per second.
-	SampleRate uint32
+	SampleRate uint
 
 	// SampleFormat denotes what format this capture is in. It's useful to keep
 	// iq information in its native capture format, and convert when required.
@@ -138,7 +138,7 @@ func (h Header) asBinaryHeader() rawHeader {
 		Magic:           [6]byte(h.Magic),
 		CaptureTime:     h.CaptureTime.UnixNano(),
 		CenterFrequency: float64(h.CenterFrequency),
-		SampleRate:      h.SampleRate,
+		SampleRate:      uint32(h.SampleRate),
 		SampleFormat:    uint8(h.SampleFormat),
 		Endianness:      endianByteFromByteOrder(h.Endianness),
 	}
@@ -182,7 +182,7 @@ func (h rawHeader) asExportHeader() Header {
 		Magic:           Magic(h.Magic),
 		CaptureTime:     time.Unix(h.CaptureTime/nanoseconds, h.CaptureTime%nanoseconds),
 		CenterFrequency: rf.Hz(h.CenterFrequency),
-		SampleRate:      h.SampleRate,
+		SampleRate:      uint(h.SampleRate),
 		SampleFormat:    sdr.SampleFormat(h.SampleFormat),
 		Endianness:      byteOrderFromEndianByte(h.Endianness),
 	}

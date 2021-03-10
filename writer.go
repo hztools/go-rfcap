@@ -52,7 +52,7 @@ func Writer(out io.Writer, header Header) (sdr.Writer, error) {
 	}, nil
 }
 
-func (w writer) SampleRate() uint32 {
+func (w writer) SampleRate() uint {
 	return w.header.SampleRate
 }
 

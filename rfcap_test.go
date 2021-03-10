@@ -45,7 +45,7 @@ func TestHeaderFromSdr(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, header.CenterFrequency, 1090*rf.MHz)
-	assert.Equal(t, header.SampleRate, uint32(10e6))
+	assert.Equal(t, header.SampleRate, uint(10e6))
 }
 
 func TestRfcapEndianO(t *testing.T) {
@@ -115,7 +115,7 @@ func TestRfcapHeaderIO(t *testing.T) {
 
 	assert.True(t, header.CaptureTime.Equal(when))
 	assert.Equal(t, header.CenterFrequency, rf.Hz(1337e+6))
-	assert.Equal(t, header.SampleRate, uint32(1.8e+8))
+	assert.Equal(t, header.SampleRate, uint(1.8e+8))
 
 	outSamples := make(sdr.SamplesU8, len(refSamples))
 	n, err = reader.Read(outSamples)
@@ -166,7 +166,7 @@ func TestRfcapSDR(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, centerFreq, rf.Hz(1337e+6))
-	assert.Equal(t, samplesPerSecond, uint32(1.8e+8))
+	assert.Equal(t, samplesPerSecond, uint(1.8e+8))
 
 	rx, err := fakeSdr.StartRx()
 	assert.NoError(t, err)

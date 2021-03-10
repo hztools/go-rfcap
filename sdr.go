@@ -60,7 +60,7 @@ func (s fakeSdr) GetCenterFrequency() (rf.Hz, error) {
 	return s.header.CenterFrequency, nil
 }
 
-func (s fakeSdr) GetSampleRate() (uint32, error) {
+func (s fakeSdr) GetSampleRate() (uint, error) {
 	return s.header.SampleRate, nil
 }
 
@@ -87,7 +87,7 @@ func (s fakeSdr) SetAutomaticGain(bool) error            { return sdr.ErrNotSupp
 func (s fakeSdr) GetGainStages() (sdr.GainStages, error) { return nil, nil }
 func (s fakeSdr) GetGain(sdr.GainStage) (float32, error) { return 0, sdr.ErrNotSupported }
 func (s fakeSdr) SetGain(sdr.GainStage, float32) error   { return sdr.ErrNotSupported }
-func (s fakeSdr) SetSampleRate(uint32) error             { return sdr.ErrNotSupported }
+func (s fakeSdr) SetSampleRate(uint) error               { return sdr.ErrNotSupported }
 func (s fakeSdr) SetPPM(int) error                       { return sdr.ErrNotSupported }
 
 // vim: foldmethod=marker

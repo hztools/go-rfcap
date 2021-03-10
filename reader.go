@@ -56,7 +56,7 @@ func Reader(in io.Reader) (sdr.Reader, Header, error) {
 	}, h, nil
 }
 
-func (r reader) SampleRate() uint32 {
+func (r reader) SampleRate() uint {
 	return r.header.SampleRate
 }
 
