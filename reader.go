@@ -47,6 +47,7 @@ func Reader(in io.Reader) (sdr.Reader, Header, error) {
 	if err := header.Validate(); err != nil {
 		return nil, Header{}, err
 	}
+	in = header.Compression.Reader(in)
 
 	h := header.asExportHeader()
 

@@ -74,6 +74,10 @@ type Header struct {
 	// Endianness defines the ByteOrder used for the data in the rfcap
 	// file.
 	Endianness binary.ByteOrder
+
+	// Compression defines what type of compression (if any) was used for this
+	// rfcap file.
+	Compression Compression
 }
 
 func (h Header) validate() error {
@@ -118,7 +122,8 @@ type rawHeader struct {
 	SampleRate      uint32
 	SampleFormat    uint8
 	Endianness      uint8
-	Reserved        [20]uint8
+	Compression     Compression
+	Reserved        [18]uint8
 }
 
 func (h rawHeader) Validate() error {
@@ -141,6 +146,7 @@ func (h Header) asBinaryHeader() rawHeader {
 		SampleRate:      uint32(h.SampleRate),
 		SampleFormat:    uint8(h.SampleFormat),
 		Endianness:      endianByteFromByteOrder(h.Endianness),
+		Compression:     h.Compression,
 	}
 }
 
@@ -185,6 +191,7 @@ func (h rawHeader) asExportHeader() Header {
 		SampleRate:      uint(h.SampleRate),
 		SampleFormat:    sdr.SampleFormat(h.SampleFormat),
 		Endianness:      byteOrderFromEndianByte(h.Endianness),
+		Compression:     h.Compression,
 	}
 }
 

@@ -46,6 +46,8 @@ func Writer(out io.Writer, header Header) (sdr.Writer, error) {
 		return nil, err
 	}
 
+	out = header.Compression.Writer(out)
+
 	return writer{
 		header: header,
 		w:      sdr.ByteWriter(out, header.Endianness, header.SampleRate, header.SampleFormat),
