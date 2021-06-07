@@ -31,14 +31,7 @@ import (
 	"hz.tools/sdr"
 )
 
-func TestCarrierWave(t *testing.T) {
-	var (
-		in                 = make(sdr.SamplesI16, 32*1024*48)
-		out                = make(sdr.SamplesI16, 32*1024*48)
-		sampleRate float64 = 1000
-		freq       float64 = 7
-	)
-
+func makeSine(in sdr.SamplesI16, sampleRate, freq float64) {
 	for i := range in {
 		ts := float64(i) / sampleRate
 		sin, cos := math.Sincos(math.Pi * 2 * ts * freq)
@@ -48,6 +41,18 @@ func TestCarrierWave(t *testing.T) {
 			int16(int32(sin*math.MaxInt16) & 0xFFF0),
 		}
 	}
+}
+
+func TestCarrierWaveReader(t *testing.T) {
+	var (
+		in  = make(sdr.SamplesI16, 32*1024*48)
+		out = make(sdr.SamplesI16, 32*1024*48)
+
+		sampleRate float64 = 1000
+		freq       float64 = 7
+	)
+
+	makeSine(in, sampleRate, freq)
 
 	pipeReader, pipeWriter := sdr.Pipe(uint(sampleRate), sdr.SampleFormatI16)
 
@@ -63,6 +68,46 @@ func TestCarrierWave(t *testing.T) {
 	go func() {
 		defer wg.Done()
 		pipeWriter.Write(in)
+	}()
+
+	_, err = sdr.ReadFull(plainReader, out)
+	assert.NoError(t, err)
+	if err != nil {
+		t.FailNow()
+	}
+
+	wg.Wait()
+
+	for i := range out {
+		assert.Equal(t, in[i], out[i])
+	}
+}
+
+func TestCarrierWaveWriter(t *testing.T) {
+	var (
+		in  = make(sdr.SamplesI16, 32*1024*48)
+		out = make(sdr.SamplesI16, 32*1024*48)
+
+		sampleRate float64 = 1000
+		freq       float64 = 7
+	)
+
+	makeSine(in, sampleRate, freq)
+
+	pipeReader, pipeWriter := sdr.Pipe(uint(sampleRate), sdr.SampleFormatI16)
+
+	plainReader, err := compress.DecompressReader(pipeReader)
+	assert.NoError(t, err)
+	assert.Equal(t, uint(sampleRate), plainReader.SampleRate())
+
+	packedWriter, err := compress.CompressWriter(pipeWriter)
+	assert.NoError(t, err)
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		packedWriter.Write(in)
 	}()
 
 	_, err = sdr.ReadFull(plainReader, out)

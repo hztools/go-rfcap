@@ -43,6 +43,38 @@ func CompressReader(in sdr.Reader) (sdr.Reader, error) {
 	})
 }
 
+func CompressWriter(out sdr.Writer) (sdr.Writer, error) {
+	if out.SampleFormat() != sdr.SampleFormatI16 {
+		return nil, fmt.Errorf("compress: only i16 supported")
+	}
+
+	pipeReader, pipeWriter := sdr.Pipe(out.SampleRate(), out.SampleFormat())
+	cr, err := CompressReader(pipeReader)
+	if err != nil {
+		return nil, err
+	}
+
+	inb := make(sdr.SamplesI16, 32*1024)
+
+	go func() {
+		for {
+			n, err := sdr.ReadFull(cr, inb)
+			if err != nil {
+				pipeReader.CloseWithError(err)
+				return
+			}
+			_, err = out.Write(inb[:n])
+			if err != nil {
+				pipeReader.CloseWithError(err)
+				return
+			}
+		}
+	}()
+
+	return pipeWriter, nil
+
+}
+
 func DecompressReader(in sdr.Reader) (sdr.Reader, error) {
 	if in.SampleFormat() != sdr.SampleFormatI16 {
 		return nil, fmt.Errorf("compress: only i16 supported")
