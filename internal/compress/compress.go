@@ -23,7 +23,36 @@ package internal
 import (
 	"fmt"
 	"unsafe"
+
+	"hz.tools/sdr"
 )
+
+func unsafeReallyDontDoThis(iq sdr.SamplesI16) []int16 {
+	base := uintptr(unsafe.Pointer(&iq[0]))
+	size := iq.Length() * 2
+	var b = struct {
+		addr uintptr
+		len  int
+		cap  int
+	}{base, size, size}
+	return *(*[]int16)(unsafe.Pointer(&b))
+}
+
+func DecompressI16(in, out sdr.SamplesI16) (int, error) {
+	n, err := Decompress(
+		unsafeReallyDontDoThis(in),
+		unsafeReallyDontDoThis(out),
+	)
+	return n / 2, err
+}
+
+func CompressI16(in, out sdr.SamplesI16) (int, error) {
+	n, err := Compress(
+		unsafeReallyDontDoThis(in),
+		unsafeReallyDontDoThis(out),
+	)
+	return n / 2, err
+}
 
 // Compress will write the IQ samples in the "iniq" buffer, and smear
 // every fourth int16 (really int12) into the other 3 int12 values. The

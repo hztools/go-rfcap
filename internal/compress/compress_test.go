@@ -27,6 +27,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"hz.tools/rfcap/internal/compress"
+	"hz.tools/sdr"
 )
 
 func TestDecompressBadLength(t *testing.T) {
@@ -76,6 +77,33 @@ func TestCompressAll(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, 4, n)
 		assert.Equal(t, v, ov)
+	}
+}
+
+func TestCompressIQAll(t *testing.T) {
+	in := make(sdr.SamplesI16, 32*1024)
+	packed := make(sdr.SamplesI16, ((32*1024)/4)*3)
+	out := make(sdr.SamplesI16, 32*1024)
+
+	for i := range in {
+		in[i] = [2]int16{
+			0x0AB0,
+			0x0AB0,
+		}
+	}
+
+	n, err := internal.CompressI16(in, packed)
+	assert.NoError(t, err)
+	assert.Equal(t, len(packed), n)
+	n, err = internal.DecompressI16(packed, out)
+	assert.NoError(t, err)
+	assert.Equal(t, len(out), n)
+
+	for i := range out {
+		assert.Equal(t, [2]int16{
+			0x0AB0,
+			0x0AB0,
+		}, out[i])
 	}
 }
 
