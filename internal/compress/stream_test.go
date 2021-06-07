@@ -22,6 +22,7 @@ package compress_test
 
 import (
 	"math"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -30,80 +31,50 @@ import (
 	"hz.tools/sdr"
 )
 
-func TestDecompressBadLength(t *testing.T) {
-	v := make([]int16, 5)
-	o := make([]int16, 10)
-	_, err := compress.Decompress(v, o)
-	assert.Error(t, err)
-}
-
-func TestDecompressShortOutput(t *testing.T) {
-	v := make([]int16, 4)
-	o := make([]int16, 2)
-	_, err := compress.Decompress(v, o)
-	assert.Error(t, err)
-}
-
-func TestCompressBadLength(t *testing.T) {
-	v := make([]int16, 5)
-	o := make([]int16, 10)
-	_, err := compress.Compress(v, o)
-	assert.Error(t, err)
-}
-
-func TestCompressShortOutput(t *testing.T) {
-	v := make([]int16, 4)
-	o := make([]int16, 2)
-	_, err := compress.Compress(v, o)
-	assert.Error(t, err)
-}
-
-func TestCompressAll(t *testing.T) {
+func TestCarrierWave(t *testing.T) {
 	var (
-		i  int16
-		pv = make([]int16, 3)
-		ov = make([]int16, 4)
+		in                 = make(sdr.SamplesI16, 32*1024*48)
+		out                = make(sdr.SamplesI16, 32*1024*48)
+		sampleRate float64 = 1000
+		freq       float64 = 7
 	)
 
-	for i = math.MinInt16; i < math.MaxInt16; i++ {
-		i := i & -16
-
-		v := []int16{i, i, i, i}
-
-		n, err := compress.Compress(v, pv)
-		assert.NoError(t, err)
-		assert.Equal(t, 3, n)
-		n, err = compress.Decompress(pv, ov)
-		assert.NoError(t, err)
-		assert.Equal(t, 4, n)
-		assert.Equal(t, v, ov)
-	}
-}
-
-func TestCompressIQAll(t *testing.T) {
-	in := make(sdr.SamplesI16, 32*1024)
-	packed := make(sdr.SamplesI16, ((32*1024)/4)*3)
-	out := make(sdr.SamplesI16, 32*1024)
-
 	for i := range in {
+		ts := float64(i) / sampleRate
+		sin, cos := math.Sincos(math.Pi * 2 * ts * freq)
+
 		in[i] = [2]int16{
-			0x0AB0,
-			0x0AB0,
+			int16(int32(cos*math.MaxInt16) & 0xFFF0),
+			int16(int32(sin*math.MaxInt16) & 0xFFF0),
 		}
 	}
 
-	n, err := compress.CompressI16(in, packed)
+	pipeReader, pipeWriter := sdr.Pipe(uint(sampleRate), sdr.SampleFormatI16)
+
+	packedReader, err := compress.CompressReader(pipeReader)
 	assert.NoError(t, err)
-	assert.Equal(t, len(packed), n)
-	n, err = compress.DecompressI16(packed, out)
+
+	plainReader, err := compress.DecompressReader(packedReader)
 	assert.NoError(t, err)
-	assert.Equal(t, len(out), n)
+	assert.Equal(t, uint(sampleRate), plainReader.SampleRate())
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		pipeWriter.Write(in)
+	}()
+
+	_, err = sdr.ReadFull(plainReader, out)
+	assert.NoError(t, err)
+	if err != nil {
+		t.FailNow()
+	}
+
+	wg.Wait()
 
 	for i := range out {
-		assert.Equal(t, [2]int16{
-			0x0AB0,
-			0x0AB0,
-		}, out[i])
+		assert.Equal(t, in[i], out[i])
 	}
 }
 
