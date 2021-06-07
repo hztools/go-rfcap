@@ -21,20 +21,28 @@
 package internal
 
 import (
+	"fmt"
 	"unsafe"
 )
 
-//
-func Compress(iniq []int16) []int16 {
+// Compress will write the IQ samples in the "iniq" buffer, and smear
+// every fourth int16 (really int12) into the other 3 int12 values. The
+// output will be written to the output buffer.
+func Compress(iniq, outpacked []int16) (int, error) {
 	if len(iniq)%4 != 0 {
-		panic("Not aligned")
+		return 0, fmt.Errorf("compress: input iq length isn't a multiple of 4")
 	}
 
 	var (
-		in  []uint16 = *(*[]uint16)(unsafe.Pointer(&iniq))
-		out          = make([]uint16, (len(in)/4)*3)
-		buf          = make([]uint16, 3)
+		in     []uint16 = *(*[]uint16)(unsafe.Pointer(&iniq))
+		outlen          = (len(in) / 4) * 3
+		out    []uint16 = *(*[]uint16)(unsafe.Pointer(&outpacked))
+		buf             = make([]uint16, 3)
 	)
+
+	if len(out) < outlen {
+		return 0, fmt.Errorf("compress: output buffer isn't large enough")
+	}
 
 	for i := 0; i < len(in)/4; i++ {
 		inI := i * 4
@@ -47,21 +55,27 @@ func Compress(iniq []int16) []int16 {
 		copy(out[outI:], buf)
 	}
 
-	var outiq []int16 = *(*[]int16)(unsafe.Pointer(&out))
-	return outiq
+	return outlen, nil
 }
 
-//
-func Decompress(iniq []int16) []int16 {
-	if len(iniq)%3 != 0 {
-		panic("Not aligned")
+// Decompress will read the input packed int12 values (packed as per
+// the 'Compress' routine in this same package) and unpack the 4th
+// int16 (really int12) value as its own phasor.
+func Decompress(inpacked, outiq []int16) (int, error) {
+	if len(inpacked)%3 != 0 {
+		return 0, fmt.Errorf("decompress: input compressed length isn't a multiple of 3")
 	}
 
 	var (
-		in  []uint16 = *(*[]uint16)(unsafe.Pointer(&iniq))
-		out          = make([]uint16, (len(in)/3)*4)
-		buf          = make([]uint16, 4)
+		in     []uint16 = *(*[]uint16)(unsafe.Pointer(&inpacked))
+		outlen          = (len(in) / 3) * 4
+		out    []uint16 = *(*[]uint16)(unsafe.Pointer(&outiq))
+		buf             = make([]uint16, 4)
 	)
+
+	if len(out) < outlen {
+		return 0, fmt.Errorf("compress: output buffer isn't large enough")
+	}
 
 	for i := 0; i < len(in)/3; i++ {
 		inI := i * 3
@@ -77,8 +91,7 @@ func Decompress(iniq []int16) []int16 {
 		copy(out[outI:], buf)
 	}
 
-	var outiq []int16 = *(*[]int16)(unsafe.Pointer(&out))
-	return outiq
+	return outlen, nil
 }
 
 // vim: foldmethod=marker

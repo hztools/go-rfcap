@@ -29,14 +29,53 @@ import (
 	"hz.tools/rfcap/internal/compress"
 )
 
+func TestDecompressBadLength(t *testing.T) {
+	v := make([]int16, 5)
+	o := make([]int16, 10)
+	_, err := internal.Decompress(v, o)
+	assert.Error(t, err)
+}
+
+func TestDecompressShortOutput(t *testing.T) {
+	v := make([]int16, 4)
+	o := make([]int16, 2)
+	_, err := internal.Decompress(v, o)
+	assert.Error(t, err)
+}
+
+func TestCompressBadLength(t *testing.T) {
+	v := make([]int16, 5)
+	o := make([]int16, 10)
+	_, err := internal.Compress(v, o)
+	assert.Error(t, err)
+}
+
+func TestCompressShortOutput(t *testing.T) {
+	v := make([]int16, 4)
+	o := make([]int16, 2)
+	_, err := internal.Compress(v, o)
+	assert.Error(t, err)
+}
+
 func TestCompressAll(t *testing.T) {
-	var i int16
+	var (
+		i  int16
+		pv = make([]int16, 3)
+		ov = make([]int16, 4)
+	)
+
 	for i = math.MinInt16; i < math.MaxInt16; i++ {
 		i := i & -16
+
 		v := []int16{i, i, i, i}
-		compressed := internal.Compress(v)
-		decompressed := internal.Decompress(compressed)
-		assert.Equal(t, v, decompressed)
+
+		n, err := internal.Compress(v, pv)
+		assert.NoError(t, err)
+		assert.Equal(t, 3, n)
+		n, err = internal.Decompress(pv, ov)
+		assert.NoError(t, err)
+		assert.Equal(t, 4, n)
+		assert.Equal(t, v, ov)
 	}
 }
 
