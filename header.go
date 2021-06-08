@@ -71,6 +71,14 @@ type Header struct {
 	// iq information in its native capture format, and convert when required.
 	SampleFormat sdr.SampleFormat
 
+	// Compressed may only be set if the Sample Format is int16. If this is
+	// true for any other Sample Format, this will result in an error being
+	// returned.
+	//
+	// This assumes the data is actually 12 bits, and packs every 4th sample
+	// into the other 3.
+	Compressed bool
+
 	// Endianness defines the ByteOrder used for the data in the rfcap
 	// file.
 	Endianness binary.ByteOrder
@@ -80,6 +88,12 @@ func (h Header) validate() error {
 	if h.SampleFormat != sdr.SampleFormatU8 {
 		if h.Endianness == nil {
 			return fmt.Errorf("rfcap: rfcap.Header.Endianness must be set")
+		}
+	}
+
+	if h.Compressed {
+		if h.SampleFormat != sdr.SampleFormatI16 {
+			return fmt.Errorf("rfcap: rfcap.Header.Compressed may only be set for i16")
 		}
 	}
 	return nil
@@ -134,12 +148,17 @@ func (h rawHeader) Validate() error {
 // a bit more explicit when we do a binary.Write / binary.Read to and fro a
 // file.
 func (h Header) asBinaryHeader() rawHeader {
+	sampleFormat := uint8(h.SampleFormat)
+	if h.Compressed {
+		sampleFormat |= 128
+	}
+
 	return rawHeader{
 		Magic:           [6]byte(h.Magic),
 		CaptureTime:     h.CaptureTime.UnixNano(),
 		CenterFrequency: float64(h.CenterFrequency),
 		SampleRate:      uint32(h.SampleRate),
-		SampleFormat:    uint8(h.SampleFormat),
+		SampleFormat:    sampleFormat,
 		Endianness:      endianByteFromByteOrder(h.Endianness),
 	}
 }
@@ -176,14 +195,24 @@ func byteOrderFromEndianByte(bo uint8) binary.ByteOrder {
 // This will translate the binary types into Go types that are much more sensible
 // to work with (such as an rf.Hz or a time.Time)
 func (h rawHeader) asExportHeader() Header {
-	var nanoseconds int64 = 1e+9
+	var (
+		nanoseconds  int64 = 1e+9
+		sampleFormat       = sdr.SampleFormat(h.SampleFormat)
+		compressed   bool
+	)
+
+	if sampleFormat&128 == 128 {
+		sampleFormat = sampleFormat ^ 128
+		compressed = true
+	}
 
 	return Header{
 		Magic:           Magic(h.Magic),
 		CaptureTime:     time.Unix(h.CaptureTime/nanoseconds, h.CaptureTime%nanoseconds),
 		CenterFrequency: rf.Hz(h.CenterFrequency),
 		SampleRate:      uint(h.SampleRate),
-		SampleFormat:    sdr.SampleFormat(h.SampleFormat),
+		Compressed:      compressed,
+		SampleFormat:    sampleFormat,
 		Endianness:      byteOrderFromEndianByte(h.Endianness),
 	}
 }
