@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE. }}}
 
-package compress_test
+package packer_test
 
 import (
 	"math"
@@ -26,35 +26,35 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"hz.tools/rfcap/internal/compress"
+	"hz.tools/rfcap/internal/packer"
 	"hz.tools/sdr"
 )
 
 func TestDecompressBadLength(t *testing.T) {
 	v := make([]int16, 5)
 	o := make([]int16, 10)
-	_, err := compress.Decompress(v, o)
+	_, err := packer.Decompress(v, o)
 	assert.Error(t, err)
 }
 
 func TestDecompressShortOutput(t *testing.T) {
 	v := make([]int16, 4)
 	o := make([]int16, 2)
-	_, err := compress.Decompress(v, o)
+	_, err := packer.Decompress(v, o)
 	assert.Error(t, err)
 }
 
 func TestCompressBadLength(t *testing.T) {
 	v := make([]int16, 5)
 	o := make([]int16, 10)
-	_, err := compress.Compress(v, o)
+	_, err := packer.Compress(v, o)
 	assert.Error(t, err)
 }
 
 func TestCompressShortOutput(t *testing.T) {
 	v := make([]int16, 4)
 	o := make([]int16, 2)
-	_, err := compress.Compress(v, o)
+	_, err := packer.Compress(v, o)
 	assert.Error(t, err)
 }
 
@@ -70,10 +70,10 @@ func TestCompressAll(t *testing.T) {
 
 		v := []int16{i, i, i, i}
 
-		n, err := compress.Compress(v, pv)
+		n, err := packer.Compress(v, pv)
 		assert.NoError(t, err)
 		assert.Equal(t, 3, n)
-		n, err = compress.Decompress(pv, ov)
+		n, err = packer.Decompress(pv, ov)
 		assert.NoError(t, err)
 		assert.Equal(t, 4, n)
 		assert.Equal(t, v, ov)
@@ -92,10 +92,10 @@ func TestCompressIQAll(t *testing.T) {
 		}
 	}
 
-	n, err := compress.CompressI16(in, packed)
+	n, err := packer.CompressI16(in, packed)
 	assert.NoError(t, err)
 	assert.Equal(t, len(packed), n)
-	n, err = compress.DecompressI16(packed, out)
+	n, err = packer.DecompressI16(packed, out)
 	assert.NoError(t, err)
 	assert.Equal(t, len(out), n)
 

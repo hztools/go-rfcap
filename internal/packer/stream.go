@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE. }}}
 
-package compress
+package packer
 
 import (
 	"fmt"
@@ -27,6 +27,8 @@ import (
 	"hz.tools/sdr/stream"
 )
 
+// CompressReader will read an int16 stream of packed 12 bit ints and
+// unpack them into real IQ data.
 func CompressReader(in sdr.Reader) (sdr.Reader, error) {
 	if in.SampleFormat() != sdr.SampleFormatI16 {
 		return nil, fmt.Errorf("compress: only i16 supported")
@@ -43,6 +45,8 @@ func CompressReader(in sdr.Reader) (sdr.Reader, error) {
 	})
 }
 
+// CompressWriter will write out int16 (really int12) values packed into
+// int16 values.
 func CompressWriter(out sdr.Writer) (sdr.Writer, error) {
 	if out.SampleFormat() != sdr.SampleFormatI16 {
 		return nil, fmt.Errorf("compress: only i16 supported")
@@ -75,6 +79,7 @@ func CompressWriter(out sdr.Writer) (sdr.Writer, error) {
 
 }
 
+// DecompressReader will unpack 12bit values into i16 values.
 func DecompressReader(in sdr.Reader) (sdr.Reader, error) {
 	if in.SampleFormat() != sdr.SampleFormatI16 {
 		return nil, fmt.Errorf("compress: only i16 supported")

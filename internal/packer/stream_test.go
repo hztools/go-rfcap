@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE. }}}
 
-package compress_test
+package packer_test
 
 import (
 	"math"
@@ -27,7 +27,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"hz.tools/rfcap/internal/compress"
+	"hz.tools/rfcap/internal/packer"
 	"hz.tools/sdr"
 )
 
@@ -56,10 +56,10 @@ func TestCarrierWaveReader(t *testing.T) {
 
 	pipeReader, pipeWriter := sdr.Pipe(uint(sampleRate), sdr.SampleFormatI16)
 
-	packedReader, err := compress.CompressReader(pipeReader)
+	packedReader, err := packer.CompressReader(pipeReader)
 	assert.NoError(t, err)
 
-	plainReader, err := compress.DecompressReader(packedReader)
+	plainReader, err := packer.DecompressReader(packedReader)
 	assert.NoError(t, err)
 	assert.Equal(t, uint(sampleRate), plainReader.SampleRate())
 
@@ -96,11 +96,11 @@ func TestCarrierWaveWriter(t *testing.T) {
 
 	pipeReader, pipeWriter := sdr.Pipe(uint(sampleRate), sdr.SampleFormatI16)
 
-	plainReader, err := compress.DecompressReader(pipeReader)
+	plainReader, err := packer.DecompressReader(pipeReader)
 	assert.NoError(t, err)
 	assert.Equal(t, uint(sampleRate), plainReader.SampleRate())
 
-	packedWriter, err := compress.CompressWriter(pipeWriter)
+	packedWriter, err := packer.CompressWriter(pipeWriter)
 	assert.NoError(t, err)
 
 	wg := sync.WaitGroup{}

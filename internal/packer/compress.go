@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE. }}}
 
-package compress
+package packer
 
 import (
 	"fmt"
@@ -38,19 +38,36 @@ func unsafeReallyDontDoThis(iq sdr.SamplesI16) []int16 {
 	return *(*[]int16)(unsafe.Pointer(&b))
 }
 
+// DecompressI16 will take our sdr.SamplesI16 type (under the hood it's a
+// [2]int16 since it contains both the real and imaginary components)
+// and preform a decompression. Every 4th IQ value (which is to say, the
+// last imaginary part) is smeared across the LSB of the other values
+// (assuming this is an int12). This will unpack that last component and
+// re-create well-formed IQ data.
 func DecompressI16(in, out sdr.SamplesI16) (int, error) {
 	n, err := Decompress(
 		unsafeReallyDontDoThis(in),
 		unsafeReallyDontDoThis(out),
 	)
+	if n%2 != 0 {
+		return n / 2, fmt.Errorf("decompress: target iq length is misaligned")
+	}
 	return n / 2, err
 }
 
+// CompressI16 will take our sdr.SamplesI16 type, and take every other
+// imaginary value, and smear the 12 bits of goodness across the other 3
+// values. This is then repackaged and sent out as if everything is totally
+// normal, totally fine.
 func CompressI16(in, out sdr.SamplesI16) (int, error) {
 	n, err := Compress(
 		unsafeReallyDontDoThis(in),
 		unsafeReallyDontDoThis(out),
 	)
+	if n%2 != 0 {
+		return n / 2, fmt.Errorf("compress: target iq length is misaligned")
+	}
+
 	return n / 2, err
 }
 

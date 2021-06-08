@@ -24,6 +24,7 @@ import (
 	"encoding/binary"
 	"io"
 
+	"hz.tools/rfcap/internal/packer"
 	"hz.tools/sdr"
 )
 
@@ -50,9 +51,21 @@ func Reader(in io.Reader) (sdr.Reader, Header, error) {
 
 	h := header.asExportHeader()
 
+	var (
+		err     error
+		sReader = sdr.ByteReader(in, h.Endianness, h.SampleRate, h.SampleFormat)
+	)
+
+	if h.Compressed {
+		sReader, err = packer.DecompressReader(sReader)
+		if err != nil {
+			return nil, Header{}, err
+		}
+	}
+
 	return reader{
 		header: h,
-		r:      sdr.ByteReader(in, h.Endianness, h.SampleRate, h.SampleFormat),
+		r:      sReader,
 	}, h, nil
 }
 
