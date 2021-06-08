@@ -24,6 +24,7 @@ import (
 	"encoding/binary"
 	"io"
 
+	"hz.tools/rfcap/internal/packer"
 	"hz.tools/sdr"
 )
 
@@ -46,9 +47,21 @@ func Writer(out io.Writer, header Header) (sdr.Writer, error) {
 		return nil, err
 	}
 
+	var (
+		sWriter = sdr.ByteWriter(out, header.Endianness, header.SampleRate, header.SampleFormat)
+		err     error
+	)
+
+	if header.Compressed {
+		sWriter, err = packer.CompressWriter(sWriter)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return writer{
 		header: header,
-		w:      sdr.ByteWriter(out, header.Endianness, header.SampleRate, header.SampleFormat),
+		w:      sWriter,
 	}, nil
 }
 
