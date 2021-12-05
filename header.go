@@ -21,6 +21,7 @@
 package rfcap
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"time"
@@ -119,6 +120,26 @@ func HeaderFromSDR(dev sdr.Sdr) (Header, error) {
 		SampleFormat:    dev.SampleFormat(),
 		Endianness:      internal.NativeEndian,
 	}, nil
+}
+
+// Unmarshal will encode a header as Bytes.
+func (h *Header) Unmarshal(b []byte) error {
+	buf := bytes.NewBuffer(b)
+	rh := rawHeader{}
+	if err := binary.Read(buf, binary.LittleEndian, &rh); err != nil {
+		return err
+	}
+	*h = rh.asExportHeader()
+	return nil
+}
+
+// Marshal will encode a header as Bytes.
+func (h *Header) Marshal() ([]byte, error) {
+	b := &bytes.Buffer{}
+	if err := binary.Write(b, binary.LittleEndian, h.asBinaryHeader()); err != nil {
+		return nil, err
+	}
+	return b.Bytes(), nil
 }
 
 // rawHeader is the format that we actually i/o with. This lets us control

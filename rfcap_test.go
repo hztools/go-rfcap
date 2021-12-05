@@ -35,6 +35,23 @@ import (
 	"hz.tools/sdr/mock"
 )
 
+func TestHeaderMarshalUnmarshal(t *testing.T) {
+	hdr := rfcap.Header{
+		Magic:           rfcap.MagicVersion1,
+		CenterFrequency: rf.MustParseHz("1337MHz"),
+		SampleRate:      1.8e+8,
+		SampleFormat:    sdr.SampleFormatC64,
+		Endianness:      binary.LittleEndian,
+	}
+	buf, err := hdr.Marshal()
+	assert.NoError(t, err)
+
+	hdr = rfcap.Header{}
+	assert.NoError(t, hdr.Unmarshal(buf))
+
+	assert.Equal(t, 1337*rf.MHz, hdr.CenterFrequency)
+}
+
 func TestHeaderFromSdr(t *testing.T) {
 	mockSdr := mock.New(mock.Config{})
 
