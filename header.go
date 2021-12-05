@@ -52,6 +52,9 @@ func (magic Magic) String() string {
 	}
 }
 
+// Size is the rfcap header size in Bytes.
+var Size int = 48
+
 // Header contains metadata around what the capture represents.
 type Header struct {
 	// Magic is 'RFCAP1'
