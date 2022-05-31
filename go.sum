@@ -8,12 +8,14 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
+github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c h1:dUUwHk2QECo/6vqA44rthZ8ie2QXMNeKRTHCNY2nXvo=
 gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b h1:h8qDotaEPuJATrMmW04NCwg7v22aHH28wwpauUhK9Oo=
 gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
+gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 hz.tools/rf v0.0.5 h1:s6Xd/2/MExWAqanMVHWDBkj5vedI/ELufdo3lohjkPo=
 hz.tools/rf v0.0.5/go.mod h1:wTwZ2xbRvTgaa5S7y34NPMg3YY5hYTlhpBbPlWYcMSE=
 hz.tools/rf v0.0.7 h1:jzIP+Q9We0B1lEZgQp7VTVAPtO/yuTwhNRxkCG/lWOg=
@@ -32,3 +34,5 @@ hz.tools/sdr v0.0.0-20211219024123-bcae83d6d80d h1:dXdm7eGC10Rr6ZRd+c8fUVVZihlD8
 hz.tools/sdr v0.0.0-20211219024123-bcae83d6d80d/go.mod h1:YX83xRT5DRUT/ue1zeiCfEJhiEP23m83RSdSg1IotxU=
 hz.tools/sdr v0.0.0-20220219015507-117a3169a4d4 h1:/3Y8buxsEne5Qbgd5RRaWpoHRPrRqbbNQNK2HXWNnak=
 hz.tools/sdr v0.0.0-20220219015507-117a3169a4d4/go.mod h1:YX83xRT5DRUT/ue1zeiCfEJhiEP23m83RSdSg1IotxU=
+hz.tools/sdr v0.0.0-20220531110027-088c769d3124 h1:iF/5Z4igRR5sNvabtnZ9wZdAll/AQc9+BDxi9bjLY1s=
+hz.tools/sdr v0.0.0-20220531110027-088c769d3124/go.mod h1:qugD6ZZ3xbD/2dITod0vbIelvmRuwjPlUOulZWqM2uk=
