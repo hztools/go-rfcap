@@ -40,7 +40,7 @@ func unsafeReallyDontDoThis(iq sdr.SamplesI16) []int16 {
 
 // DecompressI16 will take our sdr.SamplesI16 type (under the hood it's a
 // [2]int16 since it contains both the real and imaginary components)
-// and preform a decompression. Every 4th IQ value (which is to say, the
+// and perform a decompression. Every 4th IQ value (which is to say, the
 // last imaginary part) is smeared across the LSB of the other values
 // (assuming this is an int12). This will unpack that last component and
 // re-create well-formed IQ data.

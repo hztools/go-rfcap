@@ -169,7 +169,7 @@ func (h rawHeader) Validate() error {
 }
 
 // This will turn the regular Header into an rfcap "binary header" which is
-// a bit more explicit when we do a binary.Write / binary.Read to and fro a
+// a bit more explicit when we do a binary.Write / binary.Read to and from a
 // file.
 func (h Header) asBinaryHeader() rawHeader {
 	sampleFormat := uint8(h.SampleFormat)
