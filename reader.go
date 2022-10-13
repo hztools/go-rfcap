@@ -54,9 +54,7 @@ func Reader(in io.Reader) (sdr.Reader, Header, error) {
 		return nil, h, err
 	}
 
-	var (
-		sReader = sdr.ByteReader(in, h.Endianness, h.SampleRate, h.SampleFormat)
-	)
+	sReader := sdr.ByteReader(in, h.Endianness, h.SampleRate, h.SampleFormat)
 
 	if h.Compressed {
 		sReader, err = packer.DecompressReader(sReader)
