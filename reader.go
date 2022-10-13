@@ -35,24 +35,26 @@ type reader struct {
 	r      sdr.Reader
 }
 
+// ReadHeader will read the rfcap Header from the io.Reader
+func ReadHeader(in io.Reader) (Header, error) {
+	header := rawHeader{}
+	if err := binary.Read(in, binary.LittleEndian, &header); err != nil {
+		return Header{}, err
+	}
+	if err := header.Validate(); err != nil {
+		return Header{}, err
+	}
+	return header.asExportHeader(), nil
+}
+
 // Reader will create a new sdr.Reader from the provided io stream.
 func Reader(in io.Reader) (sdr.Reader, Header, error) {
-	header := rawHeader{}
-
-	// TODO(paultag): this ought to be big endian maybe? Network order and
-	// all that.
-	if err := binary.Read(in, binary.LittleEndian, &header); err != nil {
-		return nil, Header{}, err
+	h, err := ReadHeader(in)
+	if err != nil {
+		return nil, h, err
 	}
-
-	if err := header.Validate(); err != nil {
-		return nil, Header{}, err
-	}
-
-	h := header.asExportHeader()
 
 	var (
-		err     error
 		sReader = sdr.ByteReader(in, h.Endianness, h.SampleRate, h.SampleFormat)
 	)
 
