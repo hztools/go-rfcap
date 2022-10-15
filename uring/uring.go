@@ -20,32 +20,24 @@
 
 package uring
 
-// #cgo pkg-config: liburing
-//
-// #include <liburing.h>
 import "C"
-
-import (
-	"syscall"
-)
 
 type Ring struct {
 	ring *C.struct_io_uring
 }
 
 func (r *Ring) Close() error {
-	C.io_uring_queue_exit(r.ring)
-	return nil
+	return ioUringQueueExit(r.ring)
 }
 
 func NewRing() (*Ring, error) {
 	var (
 		ring       C.struct_io_uring
-		queueDepth int = 32
+		queueDepth uint = 32
 	)
 
-	if errno := C.io_uring_queue_init(C.uint(queueDepth), &ring, 0); errno != 0 {
-		return nil, syscall.Errno(-errno)
+	if err := ioUringQueueInit(queueDepth, &ring, 0); err != nil {
+		return nil, err
 	}
 
 	return &Ring{
