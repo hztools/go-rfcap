@@ -40,7 +40,7 @@ type Magic [6]byte
 
 var (
 	// MagicVersion1 signifies the first version of rfcap.
-	MagicVersion1 Magic = Magic{'R', 'F', 'C', 'A', 'P', '1'}
+	MagicVersion1 = Magic{'R', 'F', 'C', 'A', 'P', '1'}
 )
 
 func (magic Magic) String() string {
@@ -53,7 +53,7 @@ func (magic Magic) String() string {
 }
 
 // Size is the rfcap header size in Bytes.
-var Size int = 48
+var Size = 48
 
 // Header contains metadata around what the capture represents.
 type Header struct {

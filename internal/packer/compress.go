@@ -80,10 +80,10 @@ func Compress(iniq, outpacked []int16) (int, error) {
 	}
 
 	var (
-		in     []uint16 = *(*[]uint16)(unsafe.Pointer(&iniq))
-		outlen          = (len(in) / 4) * 3
-		out    []uint16 = *(*[]uint16)(unsafe.Pointer(&outpacked))
-		buf             = make([]uint16, 3)
+		in     = *(*[]uint16)(unsafe.Pointer(&iniq))
+		outlen = (len(in) / 4) * 3
+		out    = *(*[]uint16)(unsafe.Pointer(&outpacked))
+		buf    = make([]uint16, 3)
 	)
 
 	if len(out) < outlen {
@@ -113,10 +113,10 @@ func Decompress(inpacked, outiq []int16) (int, error) {
 	}
 
 	var (
-		in     []uint16 = *(*[]uint16)(unsafe.Pointer(&inpacked))
-		outlen          = (len(in) / 3) * 4
-		out    []uint16 = *(*[]uint16)(unsafe.Pointer(&outiq))
-		buf             = make([]uint16, 4)
+		in     = *(*[]uint16)(unsafe.Pointer(&inpacked))
+		outlen = (len(in) / 3) * 4
+		out    = *(*[]uint16)(unsafe.Pointer(&outiq))
+		buf    = make([]uint16, 4)
 	)
 
 	if len(out) < outlen {
